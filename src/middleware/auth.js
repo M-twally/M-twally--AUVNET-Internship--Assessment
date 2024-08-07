@@ -2,7 +2,8 @@ import { userModel } from "../../DB/models/user.model.js";
 import { asyncHandler } from "../utils/errorHandling.js"
 import jwt from "jsonwebtoken"
 
-export const authentication = asyncHandler(async (req, res, next) => {
+
+export const auth = asyncHandler(async (req, res, next) => {
     const { token } = req.headers;
     if (!token) {
         return next(new Error(`Token not provided`, {cause:401}));

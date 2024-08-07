@@ -3,6 +3,7 @@ import { ErrorClass } from "../../../utils/errorClass.js";
 import { asyncHandler } from "../../../utils/errorHandling.js";
 import { generateToken } from "../../../utils/generateAndVerifyToken.js";
 import { userModel } from "../../../../DB/models/user.model.js";
+import { hash,compare } from "../../../utils/hashing.js";
 // import bcrypt from "bcrypt"
 
 
@@ -18,7 +19,14 @@ export const signUp = asyncHandler(async (req, res, next) => {
     }
 
     // Create a new user based on the role specified
-    const user=new userModel(req.body)
+    const hashPassword = hash(password);
+
+    const user = await userModel.create({
+      name,
+      email,
+      password: hashPassword,
+      role: "user",
+    });
     await user.save();
   
     // Generate token
@@ -39,6 +47,8 @@ export const signUp = asyncHandler(async (req, res, next) => {
 
 export const signIn = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(email, password);
+  
   const user = await userModel.findOne({email:email});
   if (!email || !password ||email==null||password==null) {
     return next(new Error("Please provide email and password"),StatusCodes.BAD_REQUEST);
@@ -48,8 +58,9 @@ export const signIn = asyncHandler(async (req, res, next) => {
     return next(new Error("Email does not exist sign up first"),StatusCodes.BAD_REQUEST);
   }
   
- 
-  if (password === user.password) {
+ const ok=compare(password,user.password)
+
+  if (ok == true) {
     const token = generateToken({
       payload: {
         id: user.id,
