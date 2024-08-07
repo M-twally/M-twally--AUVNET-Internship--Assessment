@@ -22,6 +22,18 @@ const userSchema = new Schema({
         type: String,
         enum: ['admin','user'],
     },
+    confirmEmail: {
+        type: Boolean,
+        default: false,
+      },
+      emailCodeExpire:{
+        type: Date,
+      },
+      emailCode: {
+        type: String,
+        minlength: 4,
+        maxlength: 4,
+      },
 
 }, {
     timestamps: true,
