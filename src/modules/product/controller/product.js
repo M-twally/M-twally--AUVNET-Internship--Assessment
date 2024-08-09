@@ -35,7 +35,10 @@ export const getAllproducts=asyncHandler(async(req,res,next)=>{
 })
 export const updateProducts = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-
+    console.log(id);
+    
+    console.log(req.body);
+    
     if (req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
@@ -44,7 +47,9 @@ export const updateProducts = asyncHandler(async (req, res, next) => {
     if (!check) {
         return next(new Error(`Product not found`, { cause: StatusCodes.NOT_FOUND }));
     }
-
+    
+    console.log(check);
+    
     // Assuming req.user contains the authenticated user
     if (req.user._id.toString() !== check.user.toString()) {
         return next(new Error(`You are not authorized to update this product`, { cause: StatusCodes.FORBIDDEN }));
