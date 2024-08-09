@@ -7,6 +7,7 @@ import CategoryRouter from "./modules/categeory/categeory.routes.js"
 import SubcategoryRouter from "./modules/subcategory/sybcategory.routes.js"
 import BrandRouter from "./modules/brands/brands.routes.js"
 import WhishlistRouter from "./modules/wishlist/whishlist.routes.js"
+import AdminRouter from "./modules/admin/admin.routes.js"
 
 const initApp = (app, express) => {
   app.use(express.json());
@@ -17,7 +18,7 @@ const initApp = (app, express) => {
   app.use("/subcategory",SubcategoryRouter)
   app.use("/brand",BrandRouter)
   app.use("/wishlist",WhishlistRouter)
-
+  app.use("/admin",AdminRouter)
 
 
   app.use(globalEroorHandling);

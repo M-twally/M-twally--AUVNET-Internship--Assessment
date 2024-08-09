@@ -7,10 +7,10 @@ const router=Router()
 
 //el parent 
 router.use('/:categoryId/subcategories',SubcategoryRouter)
-router.post("/",auth,/*allowedTo(`admin`),*/fileUpload("image","category").single("image"),CategoryRouter.add_category)
+router.post("/",auth,allowedTo(`admin`),fileUpload("image","category").single("image"),CategoryRouter.add_category)
 router.get("/",CategoryRouter.getAllCategories)
-router.patch("/:id",fileUpload("image","category").single("image"),CategoryRouter.updateCategories)
-router.delete("/:id",CategoryRouter.deleteCategories)
+router.patch("/:id",auth,allowedTo(`admin`),fileUpload("image","category").single("image"),CategoryRouter.updateCategories)
+router.delete("/:id",auth,allowedTo(`admin`),CategoryRouter.deleteCategories)
 router.get("/:id",CategoryRouter.get_categoryBYId)
 
 
