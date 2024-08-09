@@ -1,18 +1,12 @@
 import { Router } from "express";
 import * as BrandRouter from "./controller/brands.js";
+import { allowedTo, auth } from "../../middleware/auth.js";
 const router=Router()
-router.post("/",BrandRouter.add_Brand)
+router.post("/",auth,allowedTo(`admin`),BrandRouter.add_Brand)
 router.get("/",BrandRouter.getAllBrands)
-router.patch("/:id",BrandRouter.updateBrand)
-router.delete("/:id",BrandRouter.deleteBrand)
-//////////////////////////////////////////////////////
-// BrandRouter.route("/")
-// .post(BrandRouter.add_Brand)
-// .get(BrandRouter.getAllBrands)
+router.patch("/:id",auth,allowedTo(`admin`),BrandRouter.updateBrand)
+router.delete("/:id",auth,allowedTo(`admin`),BrandRouter.deleteBrand)
 
-// BrandRouter.route("/:id")
-// .patch(BrandRouter.updateBrand)
-// .delete(BrandRouter.deleteBrand)
 
 
 
