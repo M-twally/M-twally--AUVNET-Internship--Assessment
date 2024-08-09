@@ -84,14 +84,14 @@ const productschema=new Schema({
     timestamps:true,toJSON:{virtuals:true},toObject:{virtuals:true}
 })
 
-productschema.virtual(`myReviews`,{
-    ref:`review`,
-    localField:`_id`,
-    foreignField:`product`
+// productschema.virtual(`myReviews`,{
+//     ref:`review`,
+//     localField:`_id`,
+//     foreignField:`product`
 
-})
-productschema.pre(/^find/,function(){
-    this.populate(`myReviews`)
-})
+// })
+// productschema.pre(/^find/,function(){
+//     this.populate(`myReviews`)
+// })
 
 export const productModel=model(`product`,productschema)
