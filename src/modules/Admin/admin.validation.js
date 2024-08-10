@@ -33,3 +33,18 @@ export const signIn = {
       
     }).required()
 };
+export const deleteUser = {
+  body: joi
+    .object()
+    .required()
+    .keys({
+      
+    })
+    .required(),
+    query: joi.object().keys({
+      
+    }).required(),
+    params:joi.object().keys({
+      
+    }).required()
+}

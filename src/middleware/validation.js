@@ -1,46 +1,58 @@
-import joi from 'joi'
-const reqMethods = ['body','query','headers',`params`]
+import joi from "joi";
+import { Types } from "mongoose";
+const dataMethods = ["body", "params", "query", "headers"];
 
-export const generalFields={
-    email: joi.string().email({
-    minDomainSegments:2,
-    maxDomainSegments:4,
-    tlds: { allow: ['com', 'net', 'org'] } })
+const validateObjectId = (value, helper) => {
+  return Types.ObjectId.isValid(value) ? true : helper.message("Invalid Id");
+};
+
+export const generalFields = {
+  id: joi.string().custom(validateObjectId).required(),
+  name: joi.string(),
+  //!todo add address
+  email: joi
+    .string()
+    .email({
+      minDomainSegments: 2,
+      maxDomainSegments: 4,
+      tlds: { allow: ["com", "net", "org","outlook","gov","edu"] },
+    }).message('Please enter a valid email address.'),
+  password: joi
+    .string()
+    .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{:;'?/>.<,])(?=.*[a-zA-Z]).{8,}$/)
     .required(),
-    password: joi.string().regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),
-    id:joi.number().required(),
-    name:joi.string().min(3).max(30).required(),
-}
-export const ValidationCoreFunction =(schema)=>{
-    return(req,res,next)=>{
-        const ValidationErrArray=[]
-        for(const key of reqMethods){
-            if(schema[key])
-            {
-                const ValidateResults = schema[key].validate(req[key],{
-                    abortEarly:false,
-                })
-                if(ValidateResults.error)
-                {
-                    ValidationErrArray.push(ValidateResults.error.details)
-                }
-            }
-        }
+  cPassword: joi.string(),
+  phone: joi
+    .string()
+    .trim()
+    .pattern(/^(010|012|011|015)\d{8}$/).message('Phone number must start with 010, 012, 011, or 015 followed by 8 digits.')
 
-        if (ValidationErrArray.length) {
-            return res
-            .status(400)
-            .json({ message: 'Validation Error', Errors: ValidationErrArray })
-        }
-    
-        next()
- }
-}
+   . required(),
+   code:joi
+   .string()
+   .trim()
+   .regex(/^\d{4}$/)
+};
 
-// /^                 // Start of the string
-//   (?=.*\d)         // Positive lookahead to ensure there's at least one digit
-//   (?=.*[a-z])      // Positive lookahead to ensure there's at least one lowercase letter
-//   (?=.*[A-Z])      // Positive lookahead to ensure there's at least one uppercase letter
-//   (?=.*[a-zA-Z])   // Positive lookahead to ensure there's at least one letter
-//   .{8,}            // Match any character (except newline) at least 8 times
-// $/                 // End of the string
+export const validation = (joiSchema) => {
+  return (req, res, next) => {
+    const validationErr = [];
+    dataMethods.forEach((method) => {
+      if (joiSchema[method]) {
+        const validationResult = joiSchema[method].validate(req[method], {
+          abortEarly: false,
+        });
+        if (validationResult.error) {
+          validationErr.push(validationResult.error.details[0].message);
+        }
+      }
+    });
+    if (validationErr.length) {
+      return res
+        .status(400)
+        .json({ message: "Validation Error", errors: validationErr });
+    }
+    return next();
+  };
+};
+
